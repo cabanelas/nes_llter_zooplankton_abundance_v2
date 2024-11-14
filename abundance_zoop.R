@@ -159,7 +159,8 @@ zoop <- zoop %>%
     taxa_name == "Centropages bradygi" ~ "Centropages bradyi",
     taxa_name == "Echinoderemata" ~ "Echinodermata",
     taxa_name %in% c("Haeterorhabdidae","Heterorhadbidae") ~ "Heterorhabdidae",
-    taxa_name == "Hyperidea" ~ "Hyperiidea",  
+    taxa_name == "Hyperidea" ~ "Hyperiidea",
+    taxa_name == "Gammaridea" ~ "Gammaridae",
     taxa_name == "Lucciutia" ~ "Lucicutia", 
     taxa_name == "Lucifer spp." ~ "Lucifer", 
     taxa_name == "Metrididae" ~ "Metridiidae",
@@ -169,6 +170,7 @@ zoop <- zoop %>%
     taxa_name == "Pseudodiaptomis" ~ "Pseudodiaptomus",
     taxa_name == "Phoennidae" ~ "Phaennidae", # typo? this is what i think
     taxa_name == "Oikopleura spp." ~ "Oikopleura",
+    taxa_name == "Scolecithricidae" ~ "Scolecitrichidae",
     taxa_name == "Tomoptems" ~ "Tomopteris", # typo? this is what i think
     taxa_name %in% c("Unidentified plankton and fragments",
                      "Unidentified zooplankton") ~ "Unidentified Plankton", 
