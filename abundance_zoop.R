@@ -18,6 +18,7 @@
 ## ------------------------------------------ ##
 library(here)
 library(tidyverse)
+library(suncalc)
 
 ## ------------------------------------------ ##
 #            Data -----
@@ -194,6 +195,96 @@ zoop <- zoop %>%
          unknown_count = zoo_stage_999)
 
 ## ------------------------------------------ ##
+#            DAY VS NIGHT -----
+## ------------------------------------------ ##
+# 1: add coordinates from metadata to zoop
+metadata_subset <- metadata[, c("cruise", "station", "cast", "lat_start", "lon_start")]
+
+zoop <- merge(zoop, metadata_subset, by = c("cruise", "station", "cast"), 
+              all.x = TRUE)
+
+zoop <- zoop %>%
+  rename(lat = lat_start,
+         lon = lon_start)
+
+# coordinates for AR63 L5 missing - so give it fixed station coordinates
+# 40.5133	-70.8833
+zoop <- zoop %>%
+  mutate(
+    lat = if_else(cruise == "AR63" & station == "L5", 40.5133, lat),
+    lon = if_else(cruise == "AR63" & station == "L5", -70.8833, lon)
+  )
+
+# 2: create date-time column
+zoop <- zoop %>%
+  mutate(datetime_utc = as.POSIXct(paste(event_date, time), 
+                                   format="%d-%b-%y %H:%M:%S", tz="UTC"))
+
+# 3: suntools
+
+determine_day_night_suncalc <- function(datetime_utc, 
+                                        lat, lon, 
+                                        definition = "sunrise_sunset") {
+  # convert UTC datetime to local Eastern Time
+  datetime_et <- with_tz(datetime_utc, tzone = "America/New_York")
+  
+  # extract the date for sunlight times calculation
+  date_et <- as.Date(datetime_et)
+  
+  # get sunlight times
+  sunlight_times <- getSunlightTimes(date = date_et, 
+                                     lat = lat, lon = lon, 
+                                     keep = c("sunrise", "sunset", 
+                                              "dawn", "dusk", 
+                                              "nauticalDawn", "nauticalDusk"))
+  
+  # you can choose different definitions later 
+  if (definition == "sunrise_sunset") {
+    if (datetime_et >= sunlight_times$sunrise & datetime_et < sunlight_times$sunset) {
+      return("Day")
+    } else {
+      return("Night")
+    }
+  } else if (definition == "dawn_dusk") {
+    if (datetime_et >= sunlight_times$dawn & datetime_et < sunlight_times$dusk) {
+      return("Day")
+    } else {
+      return("Night")
+    }
+  } else if (definition == "nautical") {
+    if (datetime_et >= sunlight_times$nauticalDawn & datetime_et < sunlight_times$nauticalDusk) {
+      return("Day")
+    } else {
+      return("Night")
+    }
+  } else {
+    stop("Invalid definition")
+  }
+}
+
+
+zoop <- zoop %>%
+  rowwise() %>%
+  mutate(day_night = determine_day_night_suncalc(datetime_utc, 
+                                                 lat, lon, 
+                                                 definition = "sunrise_sunset")) %>%
+  ungroup()
+
+zoop %>%
+  mutate(hour = lubridate::hour(with_tz(datetime_utc, 
+                                        tzone = "America/New_York"))) %>%
+  ggplot(aes(x = hour, fill = day_night)) +
+  geom_histogram(binwidth = 1, position = "dodge") +
+  labs(x = "Hour of Day (Local Time)", 
+       y = "Count") +
+  scale_fill_manual(values = c("Day" = "skyblue", 
+                               "Night" = "darkblue"))
+
+zoop %>%
+  count(day_night) %>%
+  mutate(proportion = n / sum(n))
+
+## ------------------------------------------ ##
 #            Calculate 100m3 abundances -----
 ## ------------------------------------------ ##
 #100m3 = ((zoo_aliquot*ZOO_STAGE_COUNT)/gear_volume_filtered)*100))*1/sample_split_factor
@@ -222,12 +313,11 @@ zoop_100m3 <- zoop %>%
 
 # select final columns 
 zoop_100m3 <- zoop_100m3 %>%
-  select(cruise, station, cast, event_date, time, volume_ml, sample_split_factor, 
-         zoo_aliquot, haul_factor, taxa_code, taxa_name, conc_100m3, zooplankton_count, 
-         totcnt,
-         adult_count, c5_count, c4_count, c3_count, c2_count, c1_count, 
-         crytopia_count, furcilia_count, calytopisis_count, nauplius_count,
-         unknown_count, adult_100m3, c5_100m3, c4_100m3, c3_100m3,
+  select(cruise, station, cast, datetime_utc, day_night, sample_split_factor, 
+         volume_ml, zoo_aliquot, haul_factor, taxa_code, taxa_name, conc_100m3, 
+         zooplankton_count, totcnt, adult_count, c5_count, c4_count, c3_count, 
+         c2_count, c1_count, crytopia_count, furcilia_count, calytopisis_count, 
+         nauplius_count, unknown_count, adult_100m3, c5_100m3, c4_100m3, c3_100m3,
          c2_100m3, c1_100m3, crytopia_100m3, furcilia_100m3, 
          calytopisis_100m3, nauplius_100m3, unknown_100m3,
          primary_flag, secondary_flag)
@@ -268,9 +358,8 @@ zoop_10m2 <- zoop %>%
 
 # select final columns 
 zoop_10m2 <- zoop_10m2 %>%
-  select(cruise, station, cast, sample_split_factor, event_date, time, 
-         volume_ml, sample_split_factor, zoo_aliquot, haul_factor,
-         taxa_code, taxa_name, 
+  select(cruise, station, cast, datetime_utc, day_night, sample_split_factor, 
+         volume_ml, zoo_aliquot, haul_factor, taxa_code, taxa_name, 
          conc_10m2, zooplankton_count, totcnt, adult_count, c5_count, c4_count,
          c3_count, c2_count, c1_count, crytopia_count, furcilia_count, 
          calytopisis_count, nauplius_count, unknown_count, adult_10m2, 
@@ -330,9 +419,11 @@ colnames(wide_unstaged_10m2) <- gsub(" ", "_", colnames(wide_unstaged_10m2))
 # first need to change date from character to date class
 sort_by_event_date <- function(df) {
   df %>%
-    mutate(event_date = as.Date(event_date, format = "%d-%b-%y")) %>%
-    arrange(event_date) %>%  # sort by date
-    mutate(event_date = format(event_date, "%d-%b-%y"))  # convert back to original format
+    mutate(datetime_utc = as.Date(datetime_utc)) %>%
+    arrange(datetime_utc) %>%  # sort by date
+    mutate(datetime_utc = as.POSIXct(datetime_utc, 
+                                     format="%Y-%m-%d", 
+                                     tz="UTC"))  # convert back to original format
   
 }
 
@@ -397,8 +488,6 @@ unique(unstaged_10m2$cruise)
 unique(unstaged_10m2$station)
 unique(unstaged_10m2$cast)
 unique(unstaged_10m2$sample_split_factor)
-unique(unstaged_10m2$event_date)
-unique(unstaged_10m2$time)
 unique(unstaged_10m2$zoo_aliquot)
 unique(unstaged_10m2$taxa_name)
 unique(unstaged_10m2$primary_flag)
