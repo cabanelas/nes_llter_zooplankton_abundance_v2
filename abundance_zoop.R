@@ -419,12 +419,8 @@ colnames(wide_unstaged_10m2) <- gsub(" ", "_", colnames(wide_unstaged_10m2))
 # first need to change date from character to date class
 sort_by_event_date <- function(df) {
   df %>%
-    mutate(datetime_utc = as.Date(datetime_utc)) %>%
     arrange(datetime_utc) %>%  # sort by date
-    mutate(datetime_utc = as.POSIXct(datetime_utc, 
-                                     format="%Y-%m-%d", 
-                                     tz="UTC"))  # convert back to original format
-  
+    mutate(datetime_utc = as.character(datetime_utc)) 
 }
 
 # apply the function to all data frames
