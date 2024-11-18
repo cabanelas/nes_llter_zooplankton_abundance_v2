@@ -143,11 +143,27 @@ zoop <- zoop %>%
 zoop <- zoop %>%
   rename(taxa_code = taxa_004)
 
+#spelling of taxa is inconsistent - sometimes all caps, etc...
 capitalize_first_word <- function(x) {
   paste(toupper(substring(x, 1, 1)), tolower(substring(x, 2)), sep = "")
 }
 # apply the function to taxa_name column
 zoop$taxa_name <- sapply(zoop$taxa_name, capitalize_first_word)
+
+#this creates a duplicate entry for two samples (due to capitalized spelling in original)
+zoop %>%
+  count(cruise, station, cast, taxa_name) %>%
+  filter(n > 1)
+
+# remove the duplicate
+zoop <- zoop %>%
+  filter(
+    !(
+      (cruise == "EN644" & station == "L9" & cast == 18 & taxa_name == "Heteropoda") |
+        (cruise == "EN657" & station == "L1" & cast == 1 & taxa_name == "Cumacea")
+    ) |
+      zooplankton_count > 0 # Retain rows with count > 0 for these cases
+  )
 
 #fix taxa names
 zoop <- zoop %>%
@@ -160,7 +176,7 @@ zoop <- zoop %>%
     taxa_name == "Echinoderemata" ~ "Echinodermata",
     taxa_name %in% c("Haeterorhabdidae","Heterorhadbidae") ~ "Heterorhabdidae",
     taxa_name == "Hyperidea" ~ "Hyperiidea",
-    taxa_name == "Gammaridea" ~ "Gammaridae",
+    #taxa_name == "Gammaridea" ~ "Gammaridae",
     taxa_name == "Lucciutia" ~ "Lucicutia", 
     taxa_name == "Lucifer spp." ~ "Lucifer", 
     taxa_name == "Metrididae" ~ "Metridiidae",
@@ -180,6 +196,20 @@ taxa_name <- zoop %>% distinct(taxa_name)
 #write.table(taxa_name, file = "taxanames.txt", sep = "\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
 #data <- read_delim("taxanames.csv", delim = "|")
 #write.csv(data, "zptaxanames_ITIS_taxamatchreport.csv")
+
+# fix taxa_codes (found typos/inconsistencies)
+zoop <- zoop %>%
+  mutate(
+    taxa_code = case_when(
+      taxa_name == "Heterorhabdidae" ~ 4030,
+      taxa_name == "Amphipoda" ~ 400,
+      taxa_name == "Augaptilidae" ~ 4182,
+      taxa_name == "Isopoda" ~ 2200,
+      taxa_name == "Ctenocalanus" ~ 4278,
+      taxa_name == "Stomatopoda" ~ 3200,
+      TRUE ~ taxa_code # keep original values for other taxa
+    )
+  )
 
 # rename columns
 colnames(zoop)
@@ -287,6 +317,60 @@ zoop %>%
   mutate(proportion = n / sum(n))
 
 ## ------------------------------------------ ##
+#     make sure all taxa are present -----
+## ------------------------------------------ ##
+# sometimes taxa == 0 but other times they are just not included..
+# make sure all cruises have the 138 taxa with 0s accordingly 
+zoop %>%
+  group_by(cruise, station, cast) %>%
+  summarise(row_count = n()) %>%
+  arrange(cruise, station, cast) #the row count should be the same
+
+zoop %>%
+  distinct(cruise, station, cast) %>%
+  count() #170*138
+#final df should have 23460 rows
+
+# step 1: unique cruise, station, and cast 
+unique_cruise_stations <- zoop %>%
+  distinct(cruise, station, cast)
+
+# step 2: expand taxa within each cruise-station-cast combination
+unique_combinations <- unique_cruise_stations %>%
+  cross_join(tibble(taxa_name = unique(zoop$taxa_name)))
+
+# step 3: Join with the original dataset and fill missing values
+zoop <- unique_combinations %>%
+  left_join(zoop, by = c("cruise", "station", "cast", "taxa_name")) %>%
+  mutate(across(starts_with("conc_"), ~ coalesce(.x, 0))) %>%
+  mutate(across(ends_with("_count"), ~ coalesce(.x, 0)))
+
+cols_to_fill <- c(
+  "sample_split_factor", "event_date", "time", "day", "month",
+  "year", "hour", "minute", "volume_ml", "zoo_aliquot", 
+  "totcnt", "primary_flag", "secondary_flag", "net_max_depth_m",
+  "vol_filtered_m3_335", "lat", "lon", "datetime_utc", "day_night"
+)
+
+zoop <- zoop %>%
+  group_by(cruise, station, cast) %>%
+  fill(all_of(cols_to_fill), .direction = "downup") %>% 
+  ungroup()
+
+# step 4: add taxa_code - lookup table 
+taxa_lookup <- zoop %>%
+  select(taxa_name, taxa_code) %>%
+  filter(!is.na(taxa_code)) %>% 
+  distinct() 
+
+zoop <- zoop %>%
+  left_join(taxa_lookup, by = "taxa_name", suffix = c("", "_lookup")) %>% 
+  mutate(
+    taxa_code = coalesce(taxa_code, taxa_code_lookup) 
+  ) %>%
+  select(-taxa_code_lookup)
+
+## ------------------------------------------ ##
 #            Calculate 100m3 abundances -----
 ## ------------------------------------------ ##
 #100m3 = ((zoo_aliquot*ZOO_STAGE_COUNT)/gear_volume_filtered)*100))*1/sample_split_factor
@@ -375,10 +459,14 @@ staged_10m2 <- zoop_10m2
 ## ------------------------------------------ ##
 #            UNSTAGED -----
 ## ------------------------------------------ ##
+
+## ---------------------- ##
+#        100m3 -----
+## ---------------------- ##
 unstaged_100m3 <- zoop_100m3 %>%
   select(-c(adult_count:unknown_100m3))
 
-# wide format
+# wide format - concentration only, no counts
 wide_unstaged_100m3 <- unstaged_100m3 %>%
   group_by(cruise, station, cast) %>%
   pivot_wider(
@@ -391,14 +479,18 @@ wide_unstaged_100m3 <- unstaged_100m3 %>%
   # summarize(across(everything(), ~ max(.)), .groups = "drop")
   summarize(across(everything(), ~ .[. != 0][1]), .groups = "drop") %>%
   # replace NAs with 0 in specified columns
-  mutate(across(`Calanus finmarchicus`:`Anomura`, ~ replace_na(., 0)))
+  mutate(across(`Calanus finmarchicus`:`Temoropia mayumbaensis`, ~ replace_na(., 0)))
 
 # add _ between taxa name columns so there arent any spaces 
 colnames(wide_unstaged_100m3) <- gsub(" ", "_", colnames(wide_unstaged_100m3))
 
+## ---------------------- ##
+#        10m2 -----
+## ---------------------- ##
 unstaged_10m2 <- zoop_10m2 %>%
   select(-c(adult_count:unknown_10m2))
 
+# wide format - concentration only, no counts
 wide_unstaged_10m2 <- unstaged_10m2 %>%
   group_by(cruise, station, cast) %>%
   pivot_wider(
@@ -409,7 +501,7 @@ wide_unstaged_10m2 <- unstaged_10m2 %>%
   dplyr::select(-taxa_code, -zooplankton_count) %>%
   # after pivoting, consolidate rows for each taxon column
   summarize(across(everything(), ~ .[. != 0][1]), .groups = "drop") %>%
-  mutate(across(`Calanus finmarchicus`:`Anomura`, ~ replace_na(., 0)))
+  mutate(across(`Calanus finmarchicus`:`Temoropia mayumbaensis`, ~ replace_na(., 0)))
 
 # add _ between taxa name columns so there arent any spaces 
 colnames(wide_unstaged_10m2) <- gsub(" ", "_", colnames(wide_unstaged_10m2))
