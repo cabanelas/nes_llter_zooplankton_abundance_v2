@@ -5,8 +5,8 @@
 This repository contains R scripts for creating the NES-LTER zooplankton abundance data package submitted to the Environmental Data Initiative (EDI) repository. The data package provides zooplankton abundance data collected during Northeast U.S. Shelf Long-Term Ecological Research (NES-LTER) transect cruises, ongoing since 2018.
 
 ## Repository Contents
-- merge_data.R: Merges multiple abundance files into a unified dataset.
-- abundance_zoop.R: Calculates zooplankton concentrations in volumetric units (100 m³) and aerial units (10 m²) and generates the final CSV files submitted to EDI.
+- `merge_data.R`: Merges multiple abundance files into a unified dataset.
+- `abundance_zoop.R`: Calculates zooplankton concentrations in volumetric units (100 m³) and aerial units (10 m²) and generates the final CSV files submitted to EDI.
 
 The generated CSV files include metadata and calculated abundance metrics, ready for inclusion in the NES-LTER data package.
 
@@ -33,7 +33,10 @@ These scripts require the following R packages:
 - suncalc
 - here
 
+Install the required packages using:
+```r
 install.packages(c("dplyr", "tidyr", "readr"))
+```
 
 ## Citation
 
