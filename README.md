@@ -1,5 +1,3 @@
-# nes_lter_zooplankton_abundance_v2
-
 # NES-LTER Zooplankton Abundance Data Package Scripts
 
 This repository contains R scripts for creating the NES-LTER zooplankton abundance data package submitted to the Environmental Data Initiative (EDI) repository. The data package provides zooplankton abundance data collected during Northeast U.S. Shelf Long-Term Ecological Research (NES-LTER) transect cruises, ongoing since 2018.
