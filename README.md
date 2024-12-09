@@ -6,7 +6,7 @@ This repository contains R scripts for creating the NES-LTER zooplankton abundan
 
 ## Repository Contents
 - merge_data.R: Merges multiple abundance files into a unified dataset.
-- abundance_zoop.R: Calculates zooplankton concentrations in volumetric units (100 m³) and aerial units (10 m²) and generates the final CSV files for submission to EDI.
+- abundance_zoop.R: Calculates zooplankton concentrations in volumetric units (100 m³) and aerial units (10 m²) and generates the final CSV files submitted to EDI.
 
 The generated CSV files include metadata and calculated abundance metrics, ready for inclusion in the NES-LTER data package.
 
