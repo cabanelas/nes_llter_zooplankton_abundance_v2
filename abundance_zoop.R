@@ -220,9 +220,9 @@ zoop <- zoop %>%
          c3_count = zoo_stage_022,
          c2_count = zoo_stage_021,
          c1_count = zoo_stage_020,
-         crytopia_count = zoo_stage_030,
+         cryptopia_count = zoo_stage_030,
          furcilia_count = zoo_stage_029,
-         calytopisis_count = zoo_stage_028,
+         calyptopis_count = zoo_stage_028,
          nauplius_count = zoo_stage_013,
          unknown_count = zoo_stage_999)
 
@@ -390,9 +390,9 @@ zoop_100m3 <- zoop %>%
     c3_100m3 = ((zoo_aliquot * c3_count) / vol_filtered_m3_335) * 100 * (1 / sample_split_factor) * haul_factor,
     c2_100m3 = ((zoo_aliquot * c2_count) / vol_filtered_m3_335) * 100 * (1 / sample_split_factor) * haul_factor,
     c1_100m3 = ((zoo_aliquot * c1_count) / vol_filtered_m3_335) * 100 * (1 / sample_split_factor) * haul_factor,
-    crytopia_100m3 = ((zoo_aliquot * crytopia_count) / vol_filtered_m3_335) * 100 * (1 / sample_split_factor) * haul_factor,
+    cryptopia_100m3 = ((zoo_aliquot * cryptopia_count) / vol_filtered_m3_335) * 100 * (1 / sample_split_factor) * haul_factor,
     furcilia_100m3 = ((zoo_aliquot * furcilia_count) / vol_filtered_m3_335) * 100 * (1 / sample_split_factor) * haul_factor,
-    calytopisis_100m3 = ((zoo_aliquot * calytopisis_count) / vol_filtered_m3_335) * 100 * (1 / sample_split_factor) * haul_factor,
+    calyptopis_100m3 = ((zoo_aliquot * calyptopis_count) / vol_filtered_m3_335) * 100 * (1 / sample_split_factor) * haul_factor,
     nauplius_100m3 = ((zoo_aliquot * nauplius_count) / vol_filtered_m3_335) * 100 * (1 / sample_split_factor) * haul_factor,
     unknown_100m3 = ((zoo_aliquot * unknown_count) / vol_filtered_m3_335) * 100 * (1 / sample_split_factor) * haul_factor
   )
@@ -402,10 +402,10 @@ zoop_100m3 <- zoop_100m3 %>%
   select(cruise, station, cast, datetime_utc, day_night, sample_split_factor, 
          volume_ml, zoo_aliquot, haul_factor, taxa_code, taxa_name, conc_100m3, 
          zooplankton_count, totcnt, adult_count, c5_count, c4_count, c3_count, 
-         c2_count, c1_count, crytopia_count, furcilia_count, calytopisis_count, 
+         c2_count, c1_count, cryptopia_count, furcilia_count, calyptopis_count, 
          nauplius_count, unknown_count, adult_100m3, c5_100m3, c4_100m3, c3_100m3,
-         c2_100m3, c1_100m3, crytopia_100m3, furcilia_100m3, 
-         calytopisis_100m3, nauplius_100m3, unknown_100m3,
+         c2_100m3, c1_100m3, cryptopia_100m3, furcilia_100m3, 
+         calyptopis_100m3, nauplius_100m3, unknown_100m3,
          primary_flag, secondary_flag)
 
 colnames(zoop_100m3)
@@ -435,9 +435,9 @@ zoop_10m2 <- zoop %>%
     c3_10m2 = ((zoo_aliquot * c3_count * net_max_depth_m) / vol_filtered_m3_335) * 10 * (1 / sample_split_factor) * haul_factor,
     c2_10m2 = ((zoo_aliquot * c2_count * net_max_depth_m) / vol_filtered_m3_335) * 10 * (1 / sample_split_factor) * haul_factor,
     c1_10m2 = ((zoo_aliquot * c1_count * net_max_depth_m) / vol_filtered_m3_335) * 10 * (1 / sample_split_factor) * haul_factor,
-    crytopia_10m2 = ((zoo_aliquot * crytopia_count * net_max_depth_m) / vol_filtered_m3_335) * 10 * (1 / sample_split_factor) * haul_factor,
+    cryptopia_10m2 = ((zoo_aliquot * cryptopia_count * net_max_depth_m) / vol_filtered_m3_335) * 10 * (1 / sample_split_factor) * haul_factor,
     furcilia_10m2 = ((zoo_aliquot * furcilia_count * net_max_depth_m) / vol_filtered_m3_335) * 10 * (1 / sample_split_factor) * haul_factor,
-    calytopisis_10m2 = ((zoo_aliquot * calytopisis_count * net_max_depth_m) / vol_filtered_m3_335) * 10 * (1 / sample_split_factor) * haul_factor,
+    calyptopis_10m2 = ((zoo_aliquot * calyptopis_count * net_max_depth_m) / vol_filtered_m3_335) * 10 * (1 / sample_split_factor) * haul_factor,
     nauplius_10m2 = ((zoo_aliquot * nauplius_count * net_max_depth_m) / vol_filtered_m3_335) * 10 * (1 / sample_split_factor) * haul_factor,
     unknown_10m2 = ((zoo_aliquot * unknown_count * net_max_depth_m) / vol_filtered_m3_335) * 10 * (1 / sample_split_factor) * haul_factor
   )
@@ -447,10 +447,10 @@ zoop_10m2 <- zoop_10m2 %>%
   select(cruise, station, cast, datetime_utc, day_night, sample_split_factor, 
          volume_ml, zoo_aliquot, haul_factor, taxa_code, taxa_name, 
          conc_10m2, zooplankton_count, totcnt, adult_count, c5_count, c4_count,
-         c3_count, c2_count, c1_count, crytopia_count, furcilia_count, 
-         calytopisis_count, nauplius_count, unknown_count, adult_10m2, 
-         c5_10m2, c4_10m2, c3_10m2, c2_10m2, c1_10m2, crytopia_10m2, 
-         furcilia_10m2, calytopisis_10m2, nauplius_10m2, unknown_10m2,
+         c3_count, c2_count, c1_count, cryptopia_count, furcilia_count, 
+         calyptopis_count, nauplius_count, unknown_count, adult_10m2, 
+         c5_10m2, c4_10m2, c3_10m2, c2_10m2, c1_10m2, cryptopia_10m2, 
+         furcilia_10m2, calyptopis_10m2, nauplius_10m2, unknown_10m2,
          primary_flag, secondary_flag)
 
 colnames(zoop_10m2)
@@ -534,8 +534,8 @@ staged_10m2_v2 <- staged_10m2
 
 # staged columns
 staged_columns <- c("adult_count", "c5_count", "c4_count", "c3_count", 
-                    "c2_count", "c1_count", "crytopia_count", "furcilia_count", 
-                    "calytopisis_count", "nauplius_count","unknown_count")
+                    "c2_count", "c1_count", "cryptopia_count", "furcilia_count", 
+                    "calyptopis_count", "nauplius_count","unknown_count")
 
 # filter for taxa with any staged data greater than 0
 staged_species <- staged_10m2_v2 %>%
