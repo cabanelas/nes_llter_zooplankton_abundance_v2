@@ -382,19 +382,19 @@ zoop_100m3 <- zoop %>%
     # h = 100 / v where: v = volume of water filtered (in meters cubed)
     haul_factor = 100 / vol_filtered_m3_335,
     
-    conc_100m3 = ((zoo_aliquot * zooplankton_count) / vol_filtered_m3_335) * 100 * (1 / sample_split_factor) * haul_factor,
+    conc_100m3 = ((zoo_aliquot * zooplankton_count) / vol_filtered_m3_335) * 100 * (1 / sample_split_factor),
     
-    adult_100m3 = ((zoo_aliquot * adult_count) / vol_filtered_m3_335) * 100 * (1 / sample_split_factor) * haul_factor,
-    c5_100m3 = ((zoo_aliquot * c5_count) / vol_filtered_m3_335) * 100 * (1 / sample_split_factor) * haul_factor,
-    c4_100m3 = ((zoo_aliquot * c4_count) / vol_filtered_m3_335) * 100 * (1 / sample_split_factor) * haul_factor,
-    c3_100m3 = ((zoo_aliquot * c3_count) / vol_filtered_m3_335) * 100 * (1 / sample_split_factor) * haul_factor,
-    c2_100m3 = ((zoo_aliquot * c2_count) / vol_filtered_m3_335) * 100 * (1 / sample_split_factor) * haul_factor,
-    c1_100m3 = ((zoo_aliquot * c1_count) / vol_filtered_m3_335) * 100 * (1 / sample_split_factor) * haul_factor,
-    cryptopia_100m3 = ((zoo_aliquot * cryptopia_count) / vol_filtered_m3_335) * 100 * (1 / sample_split_factor) * haul_factor,
-    furcilia_100m3 = ((zoo_aliquot * furcilia_count) / vol_filtered_m3_335) * 100 * (1 / sample_split_factor) * haul_factor,
-    calyptopis_100m3 = ((zoo_aliquot * calyptopis_count) / vol_filtered_m3_335) * 100 * (1 / sample_split_factor) * haul_factor,
-    nauplius_100m3 = ((zoo_aliquot * nauplius_count) / vol_filtered_m3_335) * 100 * (1 / sample_split_factor) * haul_factor,
-    unknown_100m3 = ((zoo_aliquot * unknown_count) / vol_filtered_m3_335) * 100 * (1 / sample_split_factor) * haul_factor
+    adult_100m3 = ((zoo_aliquot * adult_count) / vol_filtered_m3_335) * 100 * (1 / sample_split_factor),
+    c5_100m3 = ((zoo_aliquot * c5_count) / vol_filtered_m3_335) * 100 * (1 / sample_split_factor),
+    c4_100m3 = ((zoo_aliquot * c4_count) / vol_filtered_m3_335) * 100 * (1 / sample_split_factor),
+    c3_100m3 = ((zoo_aliquot * c3_count) / vol_filtered_m3_335) * 100 * (1 / sample_split_factor),
+    c2_100m3 = ((zoo_aliquot * c2_count) / vol_filtered_m3_335) * 100 * (1 / sample_split_factor),
+    c1_100m3 = ((zoo_aliquot * c1_count) / vol_filtered_m3_335) * 100 * (1 / sample_split_factor),
+    cryptopia_100m3 = ((zoo_aliquot * cryptopia_count) / vol_filtered_m3_335) * 100 * (1 / sample_split_factor),
+    furcilia_100m3 = ((zoo_aliquot * furcilia_count) / vol_filtered_m3_335) * 100 * (1 / sample_split_factor),
+    calyptopis_100m3 = ((zoo_aliquot * calyptopis_count) / vol_filtered_m3_335) * 100 * (1 / sample_split_factor),
+    nauplius_100m3 = ((zoo_aliquot * nauplius_count) / vol_filtered_m3_335) * 100 * (1 / sample_split_factor),
+    unknown_100m3 = ((zoo_aliquot * unknown_count) / vol_filtered_m3_335) * 100 * (1 / sample_split_factor)
   )
 
 # select final columns 
@@ -427,19 +427,19 @@ zoop_10m2 <- zoop %>%
   mutate(
     haul_factor = net_max_depth_m * 10 / vol_filtered_m3_335,
     
-    conc_10m2 = ((zoo_aliquot * zooplankton_count * net_max_depth_m) / vol_filtered_m3_335) * 10 * (1 / sample_split_factor) * haul_factor,
+    conc_10m2 = ((zoo_aliquot * zooplankton_count * net_max_depth_m) / vol_filtered_m3_335) * 10 * (1 / sample_split_factor),
     
-    adult_10m2 = ((zoo_aliquot * adult_count * net_max_depth_m) / vol_filtered_m3_335) * 10 * (1 / sample_split_factor) * haul_factor,
-    c5_10m2 = ((zoo_aliquot * c5_count * net_max_depth_m) / vol_filtered_m3_335) * 10 * (1 / sample_split_factor) * haul_factor,
-    c4_10m2 = ((zoo_aliquot * c4_count * net_max_depth_m) / vol_filtered_m3_335) * 10 * (1 / sample_split_factor) * haul_factor,
-    c3_10m2 = ((zoo_aliquot * c3_count * net_max_depth_m) / vol_filtered_m3_335) * 10 * (1 / sample_split_factor) * haul_factor,
-    c2_10m2 = ((zoo_aliquot * c2_count * net_max_depth_m) / vol_filtered_m3_335) * 10 * (1 / sample_split_factor) * haul_factor,
-    c1_10m2 = ((zoo_aliquot * c1_count * net_max_depth_m) / vol_filtered_m3_335) * 10 * (1 / sample_split_factor) * haul_factor,
-    cryptopia_10m2 = ((zoo_aliquot * cryptopia_count * net_max_depth_m) / vol_filtered_m3_335) * 10 * (1 / sample_split_factor) * haul_factor,
-    furcilia_10m2 = ((zoo_aliquot * furcilia_count * net_max_depth_m) / vol_filtered_m3_335) * 10 * (1 / sample_split_factor) * haul_factor,
-    calyptopis_10m2 = ((zoo_aliquot * calyptopis_count * net_max_depth_m) / vol_filtered_m3_335) * 10 * (1 / sample_split_factor) * haul_factor,
-    nauplius_10m2 = ((zoo_aliquot * nauplius_count * net_max_depth_m) / vol_filtered_m3_335) * 10 * (1 / sample_split_factor) * haul_factor,
-    unknown_10m2 = ((zoo_aliquot * unknown_count * net_max_depth_m) / vol_filtered_m3_335) * 10 * (1 / sample_split_factor) * haul_factor
+    adult_10m2 = ((zoo_aliquot * adult_count * net_max_depth_m) / vol_filtered_m3_335) * 10 * (1 / sample_split_factor),
+    c5_10m2 = ((zoo_aliquot * c5_count * net_max_depth_m) / vol_filtered_m3_335) * 10 * (1 / sample_split_factor),
+    c4_10m2 = ((zoo_aliquot * c4_count * net_max_depth_m) / vol_filtered_m3_335) * 10 * (1 / sample_split_factor),
+    c3_10m2 = ((zoo_aliquot * c3_count * net_max_depth_m) / vol_filtered_m3_335) * 10 * (1 / sample_split_factor),
+    c2_10m2 = ((zoo_aliquot * c2_count * net_max_depth_m) / vol_filtered_m3_335) * 10 * (1 / sample_split_factor),
+    c1_10m2 = ((zoo_aliquot * c1_count * net_max_depth_m) / vol_filtered_m3_335) * 10 * (1 / sample_split_factor),
+    cryptopia_10m2 = ((zoo_aliquot * cryptopia_count * net_max_depth_m) / vol_filtered_m3_335) * 10 * (1 / sample_split_factor),
+    furcilia_10m2 = ((zoo_aliquot * furcilia_count * net_max_depth_m) / vol_filtered_m3_335) * 10 * (1 / sample_split_factor),
+    calyptopis_10m2 = ((zoo_aliquot * calyptopis_count * net_max_depth_m) / vol_filtered_m3_335) * 10 * (1 / sample_split_factor),
+    nauplius_10m2 = ((zoo_aliquot * nauplius_count * net_max_depth_m) / vol_filtered_m3_335) * 10 * (1 / sample_split_factor),
+    unknown_10m2 = ((zoo_aliquot * unknown_count * net_max_depth_m) / vol_filtered_m3_335) * 10 * (1 / sample_split_factor)
   )
 
 # select final columns 
